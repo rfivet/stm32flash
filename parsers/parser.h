@@ -1,5 +1,6 @@
 /*
   stm32flash - Open Source ST STM32 flash program for *nix
+  Copyright (C) 2021 Renaud Fivet
   Copyright (C) 2010 Geoffrey McRae <geoff@spacevs.com>
 
   This program is free software; you can redistribute it and/or
@@ -35,6 +36,7 @@ struct parser {
 	void*        (*init )();							/* initialise the parser */
 	parser_err_t (*open )(void *storage, const char *filename, const char write);	/* open the file for read|write */
 	parser_err_t (*close)(void *storage);						/* close and free the parser */
+	unsigned int (*base )(void *storage);						/* get the base address */
 	unsigned int (*size )(void *storage);						/* get the total data size */
 	parser_err_t (*read )(void *storage, void *data, unsigned int *len);		/* read a block of data */
 	parser_err_t (*write)(void *storage, void *data, unsigned int len);		/* write a block of data */

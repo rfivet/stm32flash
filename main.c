@@ -651,7 +651,7 @@ int main(int argc, char* argv[]) {
 close:
 	if (stm && exec_flag && ret == 0) {
 		if (execute == 0)
-			execute = stm->dev->fl_start;
+			execute = start ;
 
 		fprintf(diag, "\nStarting execution at address 0x%08x... ", execute);
 		fflush(diag);
@@ -690,7 +690,7 @@ int parse_options(int argc, char *argv[])
 	int c;
 	char *pLen;
 
-	while ((c = getopt(argc, argv, "a:b:m:r:w:e:vn:g:jkfcChuos:S:F:i:R")) != -1) {
+	while ((c = getopt(argc, argv, "a:b:m:r:w:x:e:vn:g:jkfcChuos:S:F:i:R")) != -1) {
 		switch(c) {
 			case 'a':
 				port_opts.bus_addr = strtoul(optarg, NULL, 0);
@@ -718,6 +718,8 @@ int parse_options(int argc, char *argv[])
 				port_opts.serial_mode = optarg;
 				break;
 
+			case 'x':
+				exec_flag = 1;
 			case 'r':
 			case 'w':
 				if (action != ACT_NONE) {
@@ -914,7 +916,8 @@ void show_help(char *name) {
 		"	-b rate		Baud rate (default 57600)\n"
 		"	-m mode		Serial port mode (default 8e1)\n"
 		"	-r filename	Read flash to file (or - stdout)\n"
-		"	-w filename	Write flash from file (or - stdout)\n"
+		"	-w filename	Write flash from file (or - stdin)\n"
+		"	-x filename	Write flash from file (or - stdin) and start execution\n"
 		"	-C		Compute CRC of flash content\n"
 		"	-u		Disable the flash write-protection\n"
 		"	-j		Enable the flash read-protection\n"
@@ -956,6 +959,8 @@ void show_help(char *name) {
 		"\n"
 		"	Write with verify and then start execution:\n"
 		"		%s -w filename -v -g 0x0 /dev/ttyS0\n"
+		"	  or:\n"
+		"		%s -x filename -v /dev/ttyS0\n"
 		"\n"
 		"	Read flash to file:\n"
 		"		%s -r filename /dev/ttyS0\n"
@@ -974,6 +979,7 @@ void show_help(char *name) {
 		"	- entry sequence: delay 500ms\n"
 		"	- exit sequence: rts=high, dtr=low, 300ms delay, GPIO_2=high\n"
 		"		%s -R -i ',,,,,:rts&-dtr,,,2' /dev/ttyS0\n",
+		name,
 		name,
 		name,
 		name,
